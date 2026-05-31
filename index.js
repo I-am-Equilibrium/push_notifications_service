@@ -21,34 +21,49 @@ export default async ({ req, res, log, error }) => {
 
   try {
     const payload = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-    const { token, title, body } = payload;
+    const {
+  token,
+  title,
+  body,
+  type,
+  list_id,
+  task_id
+} = payload;
 
     if (!token || !title || !body) {
       return res.json({ success: false, error: 'Missing required fields: token, title, or body' }, 400);
     }
 
-    const message = {
-      token: token,
-      notification: {
-        title: title,
-        body: body,
+   const message = {
+  token,
+  notification: {
+    title,
+    body,
+  },
+
+  data: {
+    type: type || '',
+    list_id: list_id || '',
+    task_id: task_id || '',
+  },
+
+  android: {
+    priority: 'high',
+    notification: {
+      sound: 'default',
+      clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+    },
+  },
+
+  apns: {
+    payload: {
+      aps: {
+        sound: 'default',
+        badge: 1,
       },
-      android: {
-        priority: 'high',
-        notification: {
-          sound: 'default',
-          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        },
-      },
-      apns: {
-        payload: {
-          aps: {
-            sound: 'default',
-            badge: 1,
-          },
-        },
-      },
-    };
+    },
+  },
+};
 
     const response = await getMessaging().send(message);
     log(`✅ Пуш успешно отправлен! Message ID: ${response}`);
