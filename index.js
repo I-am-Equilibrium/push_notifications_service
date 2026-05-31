@@ -1,4 +1,3 @@
-import { SDK } from 'node-appwrite';
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getMessaging } from 'firebase-admin/messaging';
 
